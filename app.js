@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const app = express();
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const MODEL = process.env.MODEL;
+
 console.log("process.env", OPENAI_API_KEY);
 
 // 添加中間件
@@ -23,18 +23,18 @@ app.use(function (req, res, next) {
 
 // 定義路由
 app.post("/openai", function (req, res) {
-  const { text, maxTokens } = req.body;
+  const { text, model = "gpt-3.5-turbo" } = req.body;
 
   const requestOptions = {
     method: "POST",
-    url: "https://api.openai.com/v1/completions",
+    url: "https://api.openai.com/v1/chat/completions",
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      prompt: text,
-      model: MODEL,
+      messages: [{ "role": "user", "content": text }],
+      model: model,
       max_tokens: 2048,
     }),
   };
