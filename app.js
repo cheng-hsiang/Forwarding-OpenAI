@@ -3,7 +3,8 @@ const request = require("request");
 const bodyParser = require("body-parser");
 const app = express();
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+// const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const OPENAI_API_KEY = "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";
 
 console.log("process.env", OPENAI_API_KEY);
 
@@ -22,7 +23,7 @@ app.use(function (req, res, next) {
 });
 
 // 定義路由
-app.post("/openai", function (req, res) {
+app.post("/openai/v1/chat/completions", function (req, res) {
   const { text, model = "gpt-3.5-turbo" } = req.body;
 
   const requestOptions = {
@@ -32,11 +33,7 @@ app.post("/openai", function (req, res) {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${OPENAI_API_KEY}`,
     },
-    body: JSON.stringify({
-      messages: [{ "role": "user", "content": text }],
-      model: model,
-      max_tokens: 2048,
-    }),
+    body: JSON.stringify(req.body),
   };
 
   request(requestOptions, function (error, response, body) {
