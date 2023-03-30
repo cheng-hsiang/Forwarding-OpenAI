@@ -3,8 +3,7 @@ const request = require("request");
 const bodyParser = require("body-parser");
 const app = express();
 
-// const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const OPENAI_API_KEY = "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";
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 console.log("process.env", OPENAI_API_KEY);
 
