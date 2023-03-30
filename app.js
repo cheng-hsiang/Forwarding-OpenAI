@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 const app = express();
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const MODEL = process.env.MODEL;
+console.log("process.env", OPENAI_API_KEY);
 
 // 添加中間件
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -32,7 +34,7 @@ app.post("/openai", function (req, res) {
     },
     body: JSON.stringify({
       prompt: text,
-      model: "text-davinci-003",
+      model: MODEL,
       max_tokens: 2048,
     }),
   };
