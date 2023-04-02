@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const app = express();
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
+let useApiCount = 0;
 console.log("process.env", OPENAI_API_KEY);
 
 // 添加中間件
@@ -23,22 +23,29 @@ app.use(function (req, res, next) {
 
 // 定義路由
 app.post("/openai/v1/chat/completions", function (req, res) {
-  const { text, model = "gpt-3.5-turbo" } = req.body;
+  if (req.headers.authorization === `Bearer ${OPENAI_API_KEY}`) {
+    const requestOptions = {
+      method: "POST",
+      url: "https://api.openai.com/v1/chat/completions",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify(req.body),
+    };
 
-  const requestOptions = {
-    method: "POST",
-    url: "https://api.openai.com/v1/chat/completions",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify(req.body),
-  };
+    request(requestOptions, function (error, response, body) {
+      if (error) throw new Error(error);
+      console.log("ask: ", req.body.messages);
+      console.log("ans", body);
+      useApiCount += 1;
+      console.log("search count", useApiCount);
 
-  request(requestOptions, function (error, response, body) {
-    if (error) throw new Error(error);
-    res.send(body);
-  });
+      res.send(body);
+    });
+  } else {
+    res.status(401).send("Authorization header missing");
+  }
 });
 
 // 启动服务
